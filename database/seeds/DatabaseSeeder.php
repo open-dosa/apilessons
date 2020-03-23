@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    private $tables = [
+        'lessons',
+        'users',
+        'tags',
+        'lesson_tag',
+    ];
     /**
      * Seed the application's database.
      *
@@ -13,10 +19,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('lessons')->truncate();
-        DB::table('users')->truncate();
+        $this->cleanDatabase();
 
         $this->call(LessonsTableSeeder::class);
-        $this->call(UsersTableSeeder::class);        
+        $this->call(UsersTableSeeder::class);
+        $this->call(TagsTableSeeder::class);
+        $this->call(LessonTagTableSeeder::class);
+    }
+
+    public function cleanDatabase(): void
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        foreach ($this->tables as $tableName){
+            DB::table("$tableName")->truncate();
+        }
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
     }
 }
