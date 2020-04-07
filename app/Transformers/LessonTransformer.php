@@ -4,9 +4,9 @@ class LessonTransformer extends Transformer
 {
     
     public function transform($lesson){        
-        return [
+        return [            
             'title' => $lesson['title'],
-            'description' => $lesson['description'],            
+            'description' => $lesson['description'],                               
         ];            
     }
     

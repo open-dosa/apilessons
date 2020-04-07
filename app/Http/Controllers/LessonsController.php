@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Lesson;
+//use App\Lesson;
 use App\Transformers\LessonTransformer;
 use App\Traits\ResponseTrait;
+use App\Repos\Lesson\DbLessonRepository;
 
 class LessonsController extends Controller
 {
     protected $lessonTransformer;
+    protected $lessonRepo;
 
     use ResponseTrait;
 
-    public function __construct(){
-        $this->lessonTransformer = new LessonTransformer();
+    public function __construct(LessonTransformer $lessonTransformer, DbLessonRepository $lessonRepo){
+        $this->lessonTransformer = $lessonTransformer;
+        $this->lessonRepo = $lessonRepo;
     }
 
     /**
@@ -25,8 +28,9 @@ class LessonsController extends Controller
     public function index()
     {
         //
-        $lessons = Lesson::all();
-        
+        //$lessons = Lesson::all();
+        $lessons = $this->lessonRepo->getAll();
+
         return $this->respond([
             'lessons' => $this->lessonTransformer->transformCollection($lessons->toArray())
         ]);
@@ -65,8 +69,10 @@ class LessonsController extends Controller
      */
     public function show($id)
     {
-        //
-        $lesson = Lesson::find($id);
+        
+        // $lesson = Lesson::find($id); 
+        $lesson = $this->lessonRepo->getById($id);
+
         if(!$lesson){
             
             return $this->setStatusCode(404)->respondNotFound('Lessons not found!');
